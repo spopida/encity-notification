@@ -1,4 +1,4 @@
-package uk.co.encity.notification;
+package uk.co.encity.notification.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
