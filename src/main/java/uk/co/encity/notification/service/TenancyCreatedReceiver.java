@@ -29,11 +29,7 @@ public class TenancyCreatedReceiver {
     public TenancyCreatedReceiver(@Autowired Receiver rec) {
         this.receiver = rec;
     }
-/*
-    public void receiveMessage(String message) {
-        logger.debug("Received <" + message + ">");
-    }
-*/
+
     @Bean
     Queue queue() {
         return new Queue(queueName, false);
