@@ -10,7 +10,6 @@ import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -24,10 +23,10 @@ public class TenancyCreatedReceiver {
     static final String queueName = "encity-tenancy";
     private final Logger logger = Loggers.getLogger(getClass());
 
-    private Receiver receiver;
+    private TenancyCreatedHandler handler;
 
-    public TenancyCreatedReceiver(@Autowired Receiver rec) {
-        this.receiver = rec;
+    public TenancyCreatedReceiver(@Autowired TenancyCreatedHandler handler) {
+        this.handler = handler;
     }
 
     @Bean
@@ -56,8 +55,8 @@ public class TenancyCreatedReceiver {
     }
 
     @Bean
-    MessageListenerAdapter listenerAdapter(Receiver receiver) {
-        MessageListenerAdapter adapter = new MessageListenerAdapter(receiver, "receiveMessage");
+    MessageListenerAdapter listenerAdapter(TenancyCreatedHandler handler) {
+        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "receiveMessage");
         adapter.setMessageConverter(new Jackson2JsonMessageConverter(new ObjectMapper()));
         return adapter;
     }

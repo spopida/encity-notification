@@ -14,24 +14,19 @@ public class TenancyCreatedEvent {
 
     private String tariff;
     private EmailRecipient authorisedContact;
-    private EmailRecipient billingContact;
-    private UUID confirmUUID;
-    private Instant creationTime;
+    private String confirmUUID;
+    private String expiryTime;
 
-    public TenancyCreatedEvent(String tariff, EmailRecipient authContact, EmailRecipient billingContact, UUID confirmUUID, Instant creationTime) {
+    public TenancyCreatedEvent(String tariff, EmailRecipient authContact, String confirmUUID, String creationTime) {
 
         this.tariff = tariff;
         this.authorisedContact = authContact;
-        this.billingContact = billingContact;
         this.confirmUUID = confirmUUID;
-        this.creationTime = creationTime;
+        this.expiryTime = creationTime;
     }
 
-    // TODO: don't hard code 1 hour...
-    public Instant getExpiryTime() { return this.creationTime.plus(1, ChronoUnit.HOURS); }
-    public Instant getCreationTime() { return this.creationTime; }
-    public UUID getConfirmUUID() { return this.confirmUUID; }
+    public String getExpiryTime() { return this.expiryTime; }
+    public String getConfirmUUID() { return this.confirmUUID; }
     public String getTariff() { return this.tariff; }
     public EmailRecipient getAuthorisedContact() { return this.authorisedContact; }
-    public EmailRecipient getBillingContact() { return this.billingContact; }
 }
