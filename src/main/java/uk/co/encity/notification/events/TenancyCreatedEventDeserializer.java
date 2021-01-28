@@ -22,6 +22,7 @@ public class TenancyCreatedEventDeserializer extends StdDeserializer<TenancyCrea
     public TenancyCreatedEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
+        String tenancyId = node.get("tenancyId").asText();
         String tariff = node.get("tariff").asText();
         EmailRecipient authContact = this.deserializeContact(node.get("authorisedContact"));
         String confirmUUID = node.get("confirmUUID").asText();
@@ -33,7 +34,7 @@ public class TenancyCreatedEventDeserializer extends StdDeserializer<TenancyCrea
         Instant i = Instant.ofEpochSecond(sec, nan);
         String expiry = i.toString();
 
-        return new TenancyCreatedEvent(tariff, authContact, confirmUUID, expiry);
+        return new TenancyCreatedEvent(tenancyId, tariff, authContact, confirmUUID, expiry);
     }
 
     private EmailRecipient deserializeContact(JsonNode node) {

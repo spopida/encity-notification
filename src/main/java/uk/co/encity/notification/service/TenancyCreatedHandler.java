@@ -12,6 +12,9 @@ import javax.mail.internet.MimeMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,11 +83,20 @@ public class TenancyCreatedHandler {
         }
 
         // Create an email to the authorised contact
-        // TODO: Fix the tenancy id (get it from the event)!
+
+        // TODO: Revisit this - it's not sustainable as it results in ids in 2 different formats
+        String tenancyId = evt.getTenancyId(); // Default...but try to convert to base64url...
+        try {
+            byte[] decodedHex = Hex.decodeHex(evt.getTenancyId());
+            tenancyId = Base64.encodeBase64URLSafeString(decodedHex);
+        } catch (DecoderException e) {
+            logger.error("Unexpected error decoding hex tenancy id!: " + tenancyId);
+        }
+
         String msgText = "Dear " + evt.getAuthorisedContact().getFirstName() + " " + evt.getAuthorisedContact().getLastName() + "\n" +
                          "  Tariff: " + evt.getTariff() + "\n" +
                          "  Expiry: " + evt.getExpiryTime() + "\n" +
-                         "  URL: " + this.confirmURL + "/1234?action=confirm&uuid=" + evt.getConfirmUUID();
+                         "  URL: " + this.confirmURL + "/" + tenancyId + "?action=confirm&uuid=" + evt.getConfirmUUID();
 
         // Send an email
         String to = evt.getAuthorisedContact().getEmailAddress();
