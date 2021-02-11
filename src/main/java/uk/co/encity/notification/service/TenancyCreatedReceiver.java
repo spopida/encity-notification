@@ -41,7 +41,7 @@ public class TenancyCreatedReceiver {
 
     @Bean
     Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with("encity.tenancy.#");
+        return BindingBuilder.bind(queue).to(exchange).with("encity.tenancy.created");
     }
 
     @Bean

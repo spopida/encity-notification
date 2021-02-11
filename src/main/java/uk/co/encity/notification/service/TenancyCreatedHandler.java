@@ -16,10 +16,7 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 import reactor.util.Logger;
 import reactor.util.Loggers;
 import uk.co.encity.notification.events.TenancyCreatedEvent;
@@ -28,9 +25,6 @@ import uk.co.encity.notification.events.TenancyCreatedEventDeserializer;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
-import javax.activation.DataHandler;
-
-import static java.lang.Integer.parseInt;
 
 @Component
 public class TenancyCreatedHandler {
@@ -84,14 +78,7 @@ public class TenancyCreatedHandler {
 
         // Create an email to the authorised contact
 
-        // TODO: Revisit this - it's not sustainable as it results in ids in 2 different formats
-        String tenancyId = evt.getTenancyId(); // Default...but try to convert to base64url...
-        try {
-            byte[] decodedHex = Hex.decodeHex(evt.getTenancyId());
-            tenancyId = Base64.encodeBase64URLSafeString(decodedHex);
-        } catch (DecoderException e) {
-            logger.error("Unexpected error decoding hex tenancy id!: " + tenancyId);
-        }
+        String tenancyId = evt.getTenancyId();
 
         String msgText = "Dear " + evt.getAuthorisedContact().getFirstName() + " " + evt.getAuthorisedContact().getLastName() + "\n" +
                          "  Tariff: " + evt.getTariff() + "\n" +
@@ -132,6 +119,7 @@ public class TenancyCreatedHandler {
 
             //Send the message
             Transport.send(msg);
+            logger.debug("Email sent successfully; tenancy id: " + tenancyId);
         }
         catch (MessagingException mex) {
             // Prints all nested (chained) exceptions as well
