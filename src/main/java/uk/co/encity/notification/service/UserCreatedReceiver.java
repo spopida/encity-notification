@@ -18,43 +18,42 @@ import reactor.util.Logger;
 import reactor.util.Loggers;
 
 @Component
-public class TenancyCreatedReceiver {
+public class UserCreatedReceiver {
 
     //private static final String topicExchangeName = "encity-exchange";
-    private static final String queueName = "encity-tenancy-created";
+    private static final String queueName = "encity-user-created";
     private final Logger logger = Loggers.getLogger(getClass());
 
-    private TenancyCreatedHandler handler;
+    private UserCreatedHandler handler;
 
-    public TenancyCreatedReceiver(@Autowired TenancyCreatedHandler handler) {
+    public UserCreatedReceiver(@Autowired UserCreatedHandler handler) {
         this.handler = handler;
     }
 
     @Bean
-    Queue tenancyCreatedQueue() {
+    Queue userCreatedQueue() {
         return new Queue(queueName, false);
     }
 
-
     @Bean
-    Binding tenancyCreatedBinding(Queue tenancyCreatedQueue, TopicExchange exchange) {
-        return BindingBuilder.bind(tenancyCreatedQueue).to(exchange).with("encity.tenancy.created");
+    Binding userCreatedBinding(Queue userCreatedQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(userCreatedQueue).to(exchange).with("encity.user.created");
     }
 
     @Bean
-    SimpleMessageListenerContainer tenancyCreatedContainer(ConnectionFactory connectionFactory,
-                                             MessageListenerAdapter tenancyCreatedListenerAdapter) {
+    SimpleMessageListenerContainer userCreatedContainer(ConnectionFactory connectionFactory,
+                                             MessageListenerAdapter userCreatedListenerAdapter) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.setQueueNames(queueName);
-        container.setMessageListener(tenancyCreatedListenerAdapter);
+        container.setMessageListener(userCreatedListenerAdapter);
         return container;
     }
 
     @Bean
-    @Qualifier("tenancy-created")
-    MessageListenerAdapter tenancyCreatedListenerAdapter(TenancyCreatedHandler handler) {
-        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "receiveMessage");
+    @Qualifier("user-created")
+    MessageListenerAdapter userCreatedListenerAdapter(UserCreatedHandler handler) {
+        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "receiveUserCreatedEvent");
         adapter.setMessageConverter(new Jackson2JsonMessageConverter(new ObjectMapper()));
         return adapter;
     }

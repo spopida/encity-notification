@@ -1,6 +1,18 @@
 package uk.co.encity.notification.components;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
+
+@Getter
 public class EmailRecipient {
+
+    public static EmailRecipient deserialize(JsonNode node) {
+        String first = node.get("firstName").asText();
+        String last = node.get("lastName").asText();
+        String email = node.get("emailAddress").asText();
+
+        return new EmailRecipient(first, last, email);
+    }
 
     private String firstName;
     private String lastName;
@@ -12,7 +24,4 @@ public class EmailRecipient {
         this.emailAddress = emailAddress;
     }
 
-    public String getFirstName() { return this.firstName; }
-    public String getLastName() { return this.lastName; }
-    public String getEmailAddress() { return this.emailAddress; }
 }
