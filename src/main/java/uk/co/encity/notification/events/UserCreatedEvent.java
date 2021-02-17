@@ -10,14 +10,13 @@ import uk.co.encity.notification.components.EmailRecipient;
 public class UserCreatedEvent {
     private final Logger logger = Loggers.getLogger(getClass());
 
-    private String userId;
-    private String tenancyId;
-    private String firstName;
-    private String lastName;
-    private String emailAddress;
-    private boolean isAdminUser;
-    /* TODO:...
-    private String confirmUUID;
-    private String expiryTime;
-    */
+    private final String userId;
+    private final String tenancyId;
+    private final String firstName;
+    private final String lastName;
+    private final String emailAddress;
+    private final boolean isAdminUser;
+    private final String domain;
+    private final String confirmUUID;
+    private final String expiryTime;
 }

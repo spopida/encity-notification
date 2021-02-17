@@ -15,6 +15,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.util.Logger;
@@ -31,33 +32,13 @@ public class TenancyCreatedHandler {
     private final Logger logger = Loggers.getLogger(getClass());
     private final String subject = "New encity Tenancy created - please authorise";
 
-    @Value("${mail.smtp.host}")
-    private String mailSMTPHost;
-
-    @Value("${javax.mail.username}")
-    private String mailUserName;
-
-    @Value("${javax.mail.password}")
-    private String mailPassWord;
-
-    @Value("${mail.smtp.port}")
-    private String mailSMTPPort;
-
-    @Value("${mail.smtp.auth}")
-    private String mailSMTPAuth;
-
-    @Value("${mail.smtp.ssl.enable}")
-    private String mailSMTPSSL;
-
-    @Value("${mail.debug}")
-    private String mailDebug;
-
-    @Value("${mail.from}")
-    private String fromAddr;
-
     @Value("${uk.co.encity.notification.confirm.url}")
     private String confirmURL;
 
+    private final SMTPMailer smtpMailer;
+
+    public TenancyCreatedHandler(@Autowired SMTPMailer mailer) { this.smtpMailer = mailer;
+    }
     public void receiveMessage(String message) {
         logger.debug("Received <" + message + ">");
 
@@ -71,9 +52,9 @@ public class TenancyCreatedHandler {
         TenancyCreatedEvent evt = null;
         try {
             evt = mapper.readValue(message, TenancyCreatedEvent.class);
-            logger.debug("Tenancy created event de-serialised successfully");
+            logger.debug(this.getClass().getName() + " de-serialisation successful");
         } catch (IOException e) {
-            logger.error("Error de-serialising tenancy created event: " + e.getMessage());
+            logger.error(this.getClass().getName() + " de-serialization error: " + e.getMessage());
         }
 
         // Create an email to the authorised contact
@@ -83,46 +64,14 @@ public class TenancyCreatedHandler {
         String msgText = "Dear " + evt.getAuthorisedContact().getFirstName() + " " + evt.getAuthorisedContact().getLastName() + "\n" +
                          "  Tariff: " + evt.getTariff() + "\n" +
                          "  Expiry: " + evt.getExpiryTime() + "\n" +
-                         "  URL: " + this.confirmURL + "/" + tenancyId + "?action=confirm&uuid=" + evt.getConfirmUUID();
+                         "  URL: " + this.confirmURL + "tenancy/" + tenancyId + "?action=confirm&uuid=" + evt.getConfirmUUID();
 
-        // Send an email
-        String to = evt.getAuthorisedContact().getEmailAddress();
-        String from = this.fromAddr;
-
-        // Create properties, get Session
-        Properties props = new Properties();
-
-        props.put("mail.smtp.host", this.mailSMTPHost);
-        props.put("mail.smtp.port", this.mailSMTPPort);
-        props.put("mail.smtp.auth", this.mailSMTPAuth);
-        props.put("mail.debug", this.mailDebug);
-        props.put("mail.smtp.ssl.enable", this.mailSMTPSSL);
-        Session session = Session.getInstance(
-            props,
-            new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(mailUserName, mailPassWord);
-                }
-            });
         try {
-            Message msg = new MimeMessage(session);
-
-            //Set message attributes
-            msg.setFrom(new InternetAddress(from));
-            InternetAddress[] address = {new InternetAddress(to)};
-            msg.setRecipients(Message.RecipientType.TO, address);
-            msg.setSubject(this.subject);
-            msg.setSentDate(new Date());
-
-            // Set message content
-            msg.setText(msgText);
-
-            //Send the message
-            Transport.send(msg);
-            logger.debug("Email sent successfully; tenancy id: " + tenancyId);
-        }
-        catch (MessagingException mex) {
-            // Prints all nested (chained) exceptions as well
+            String subject = "New Encity tenancy created - please authorise";
+            String toAddr = evt.getAuthorisedContact().getEmailAddress();
+            this.smtpMailer.sendEmail(toAddr, subject, msgText);
+            logger.debug( "Email sent successfully to: " + toAddr);
+        } catch (MessagingException mex) {
             mex.printStackTrace();
         }
     }

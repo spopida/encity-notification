@@ -53,7 +53,7 @@ public class UserCreatedReceiver {
     @Bean
     @Qualifier("user-created")
     MessageListenerAdapter userCreatedListenerAdapter(UserCreatedHandler handler) {
-        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "receiveUserCreatedEvent");
+        MessageListenerAdapter adapter = new MessageListenerAdapter(handler, "receiveMessage");
         adapter.setMessageConverter(new Jackson2JsonMessageConverter(new ObjectMapper()));
         return adapter;
     }

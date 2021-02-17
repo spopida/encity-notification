@@ -30,6 +30,9 @@ public class UserCreatedEventDeserializer extends StdDeserializer<UserCreatedEve
                 .lastName(node.get("lastName").asText())
                 .emailAddress(node.get("emailAddress").asText())
                 .isAdminUser(node.get("isAdminUser").asBoolean())
+                .confirmUUID(node.get("confirmUUID").asText())
+                .domain(node.get("domain").asText())
+                .expiryTime(node.get("expiryTime").asText())
             .build();
     }
 }

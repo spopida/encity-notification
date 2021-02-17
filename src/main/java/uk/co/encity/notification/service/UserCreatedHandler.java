@@ -29,8 +29,9 @@ public class UserCreatedHandler {
         this.smtpMailer = mailer;
     }
 
-    public void receiveUserCreatedEvent(String message) {
+    public void receiveMessage(String message) {
         logger.debug("Received <" + message + ">");
+
         // De-serialise the JSON into a POJO
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
@@ -51,16 +52,12 @@ public class UserCreatedHandler {
 
         String msgText = "Dear " + evt.getFirstName() + " " + evt.getLastName() + ",\n\n" +
                 "Please confirm creation of your new Encity user account for tenancy: " +
-                evt.getTenancyId() + ".\n\n" +
-                // TODO: Change tenancy id to tenancy domain / name
-                "Please note: if it remains unconfirmed, this account will automatically expire at " + "." +
+                evt.getDomain() + " by clicking on the link below.\n\n" +
+                "Click here: " + this.confirmURL + "users/" + evt.getUserId() + "?action=confirm&uuid=" + evt.getConfirmUUID() + "\n\n" +
+                "Please note: if it remains unconfirmed, this account will automatically expire at " + evt.getExpiryTime() + "." +
                 "If you were not expecting this email, please contact an Encity administrator in your organisation.\n\n" +
                 "Kind regards,\n\n" +
                 "Encity Customer Support";
-                // TODO:
-                //"  Expiry: " + evt.getExpiryTime() + "\n" +
-                //"  URL: " + this.confirmURL + "/" + userId + "?action=confirm&uuid=" + evt.getConfirmUUID();
-
         try {
             String subject = "New Encity user created - please review";
 
