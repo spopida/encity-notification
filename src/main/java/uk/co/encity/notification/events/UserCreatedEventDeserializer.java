@@ -22,17 +22,20 @@ public class UserCreatedEventDeserializer extends StdDeserializer<UserCreatedEve
     public UserCreatedEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
+        JsonNode userNode = node.get("user");
+        JsonNode eventNode = node.get("event");
 
         return UserCreatedEvent.builder()
-                .userId(node.get("userId").asText())
-                .tenancyId(node.get("tenancyId").asText())
-                .firstName(node.get("firstName").asText())
-                .lastName(node.get("lastName").asText())
-                .emailAddress(node.get("emailAddress").asText())
-                .isAdminUser(node.get("isAdminUser").asBoolean())
-                .confirmUUID(node.get("confirmUUID").asText())
-                .domain(node.get("domain").asText())
-                .expiryTime(node.get("expiryTime").asText())
+                .userId(userNode.get("userId").asText())
+                .tenancyId(userNode.get("tenancyId").asText())
+                .firstName(userNode.get("firstName").asText())
+                .lastName(userNode.get("lastName").asText())
+                .emailAddress(userNode.get("emailAddress").asText())
+                .isAdminUser(userNode.get("adminUser").asBoolean())
+                .confirmUUID(userNode.get("confirmUUID").asText())
+                .domain(userNode.get("domain").asText())
+                .expiryTime(userNode.get("expiryTime").asText())
+                .eventTime(eventNode.get("eventTime").asText())
             .build();
     }
 }

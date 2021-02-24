@@ -19,4 +19,5 @@ public class UserCreatedEvent {
     private final String domain;
     private final String confirmUUID;
     private final String expiryTime;
+    private final String eventTime;
 }
