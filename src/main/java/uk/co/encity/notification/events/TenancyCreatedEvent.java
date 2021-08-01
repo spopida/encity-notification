@@ -20,13 +20,13 @@ public class TenancyCreatedEvent {
     private String confirmUUID;
     private String expiryTime;
 
-    public TenancyCreatedEvent(String tenancyId, String tariff, EmailRecipient authContact, String confirmUUID, String creationTime) {
+    public TenancyCreatedEvent(String tenancyId, String tariff, EmailRecipient authContact, String confirmUUID, String expiryTime) {
 
         this.tenancyId = tenancyId;
         this.tariff = tariff;
         this.authorisedContact = authContact;
         this.confirmUUID = confirmUUID;
-        this.expiryTime = creationTime;
+        this.expiryTime = expiryTime;
     }
 /*
     public String getTenancyId() { return this.tenancyId; }

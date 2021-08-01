@@ -64,7 +64,7 @@ public class TenancyCreatedHandler {
         String msgText = "Dear " + evt.getAuthorisedContact().getFirstName() + " " + evt.getAuthorisedContact().getLastName() + "\n" +
                          "  Tariff: " + evt.getTariff() + "\n" +
                          "  Expiry: " + evt.getExpiryTime() + "\n" +
-                         "  URL: " + this.confirmURL + "tenancy/" + tenancyId + "?action=confirm&uuid=" + evt.getConfirmUUID();
+                         "  URL: " + this.confirmURL + "tenancy/" + tenancyId + "/confirm?uuid=" + evt.getConfirmUUID();
 
         try {
             String subject = "New Encity tenancy created - please authorise";
