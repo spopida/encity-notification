@@ -21,8 +21,6 @@ import reactor.util.Loggers;
 @AllArgsConstructor
 public class TenancyHmrcAuthorisationRequestedReceiver {
 
-    // TODO: figure out how this queue is published to, given that there is no reference
-    // TODO: to it in the publishing microservice!
     private static final String queueName = "encity-tenancy-hmrc_authorisation_requested";
     private final Logger logger = Loggers.getLogger(getClass());
 
