@@ -61,7 +61,12 @@ public class HmrcVatAuthzRequestedHandler {
         contentMap.put("companyName", evt.getCompanyName());
         contentMap.put("tenancyDomain", evt.getDomain());
         contentMap.put("expiry", evt.getExpiry());
-        contentMap.put("authoriseUrl", this.authoriseUrlRoot + "tenancy/" + tenancyId + "/authorise-hmrc-vat?uuid=" + evt.getRequestUUID());
+        contentMap.put(
+                "authoriseUrl",
+                this.authoriseUrlRoot +
+                        "tenancy/" + tenancyId +
+                        "/authorise-hmrc-vat?uuid=" + evt.getRequestUUID() +
+                        "&cn=" + evt.getCompanyNumber());
 
         String msgTemplate =
                 "Dear " + evt.getContactEmail() + "\n\n" +
@@ -70,9 +75,8 @@ public class HmrcVatAuthzRequestedHandler {
                         "you are requested authorise access to your HMRC data. This will enable users of the account to \n" +
                         "retrieve and update the HMRC records of ${companyName} (subject to their specific permissions in ${encityClientName})  .\n\n" +
 
-                        "Please click on the URL below to authorise or reject this request.\n\n" +
-
-                        "Please note that this request will expire at ${expiry}.\n\n" +
+                        "Please click on the URL below to authorise or reject this request. " +
+                        "This request will expire at ${expiry}.\n\n" +
 
                         "Please IGNORE this request if you are not expecting it.  The authorised administrators of \n" +
                         "the ${tenancyDomain} account in ${encityClientName} should have pre-agreed your consent for access to HMRC data \n" +
