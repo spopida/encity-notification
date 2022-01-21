@@ -90,6 +90,12 @@ public class HmrcVatAuthzRequestedHandler {
 
                         "${encityClientName} on behalf of ${tenancyDomain}";
 
+        // TODO:
+        //
+        // Add a link for revocation: https://www.tax.service.gov.uk/applications-manage-authority?_ga=2.250370758.1136785837.1641810300-335133712.1641560914
+        //
+        // Or put this in a different email (Authority Created)
+
         StringSubstitutor sub = new StringSubstitutor(contentMap);
         String resolvedString = sub.replace(msgTemplate);
 
